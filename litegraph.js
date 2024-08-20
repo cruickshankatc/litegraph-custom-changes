@@ -16,20 +16,20 @@
 
         CANVAS_GRID_SIZE: 10,
 
-        NODE_TITLE_HEIGHT: 30, 
+        NODE_TITLE_HEIGHT: 30,
         NODE_TITLE_TEXT_Y: 20,
         NODE_SLOT_HEIGHT: 20,
-        NODE_WIDGET_HEIGHT: 50,
+        NODE_WIDGET_HEIGHT: 20,
         NODE_WIDTH: 140,
         NODE_MIN_WIDTH: 50,
         NODE_COLLAPSED_RADIUS: 10,
         NODE_COLLAPSED_WIDTH: 80,
-        NODE_TITLE_COLOR: "#fff",
+        NODE_TITLE_COLOR: "#999",
         NODE_SELECTED_TITLE_COLOR: "#FFF",
         NODE_TEXT_SIZE: 14,
-        NODE_TEXT_COLOR: "#fff",
+        NODE_TEXT_COLOR: "#AAA",
         NODE_SUBTEXT_SIZE: 12,
-        NODE_DEFAULT_COLOR: "#212225",
+        NODE_DEFAULT_COLOR: "#333",
         NODE_DEFAULT_BGCOLOR: "#353535",
         NODE_DEFAULT_BOXCOLOR: "#666",
         NODE_DEFAULT_SHAPE: "box",
@@ -5336,9 +5336,9 @@ LGraphNode.prototype.executeAction = function(action)
         this.ds = new DragAndScale();
         this.zoom_modify_alpha = true; //otherwise it generates ugly patterns when scaling down too much
 
-        this.title_text_font = "" + LiteGraph.NODE_TEXT_SIZE + "px public+sans";
+        this.title_text_font = "" + LiteGraph.NODE_TEXT_SIZE + "px Arial";
         this.inner_text_font =
-            "normal " + LiteGraph.NODE_SUBTEXT_SIZE + "px public+sans";
+            "normal " + LiteGraph.NODE_SUBTEXT_SIZE + "px Arial";
         this.node_title_color = LiteGraph.NODE_TITLE_COLOR;
         this.default_link_color = LiteGraph.LINK_COLOR;
         this.default_connection_color = {
@@ -5362,8 +5362,8 @@ LGraphNode.prototype.executeAction = function(action)
         this.use_gradients = false; //set to true to render titlebar with gradients
         this.editor_alpha = 1; //used for transition
         this.pause_rendering = false;
-        this.clear_background = false;
-        this.clear_background_color = "#000";
+        this.clear_background = true;
+        this.clear_background_color = "#222";
 
 		this.read_only = false; //if set to true users cannot modify the graph
         this.render_only_selected = true;
@@ -8139,7 +8139,7 @@ LGraphNode.prototype.executeAction = function(action)
         ctx.globalAlpha = 1;
 
         ctx.fillStyle = "#888";
-        ctx.font = "14px public+sans";
+        ctx.font = "14px Arial";
         ctx.textAlign = "left";
         ctx.fillText("Graph Inputs", 20, 34);
         // var pos = this.mouse;
@@ -8150,7 +8150,7 @@ LGraphNode.prototype.executeAction = function(action)
         }
 
         var y = 50;
-        ctx.font = "14px public+sans";
+        ctx.font = "14px Arial";
         if (subnode.inputs)
             for (var i = 0; i < subnode.inputs.length; ++i) {
                 var input = subnode.inputs[i];
@@ -8208,7 +8208,7 @@ LGraphNode.prototype.executeAction = function(action)
         ctx.globalAlpha = 1;
 
         ctx.fillStyle = "#888";
-        ctx.font = "14px public+sans";
+        ctx.font = "14px Arial";
         ctx.textAlign = "left";
         var title_text = "Graph Outputs"
         var tw = ctx.measureText(title_text).width
@@ -8220,7 +8220,7 @@ LGraphNode.prototype.executeAction = function(action)
         }
 
         var y = 50;
-        ctx.font = "14px public+sans";
+        ctx.font = "14px Arial";
         if (subnode.outputs)
             for (var i = 0; i < subnode.outputs.length; ++i) {
                 var output = subnode.outputs[i];
@@ -8294,7 +8294,7 @@ LGraphNode.prototype.executeAction = function(action)
 			{
 				ctx.fillStyle = textcolor;
 				ctx.textAlign = "center";
-				ctx.font = ((h * 0.65)|0) + "px public+sans";
+				ctx.font = ((h * 0.65)|0) + "px Arial";
 				ctx.fillText( text, x + w * 0.5,y + h * 0.75 );
 				ctx.textAlign = "left";
 			}
@@ -8329,7 +8329,7 @@ LGraphNode.prototype.executeAction = function(action)
         ctx.save();
         ctx.translate(x, y);
 
-        ctx.font = "10px public+sans";
+        ctx.font = "10px Arial";
         ctx.fillStyle = "#888";
 		ctx.textAlign = "left";
         if (this.graph) {
@@ -8382,7 +8382,7 @@ LGraphNode.prototype.executeAction = function(action)
             ctx.lineWidth = 10;
             ctx.strokeRect(1, 1, canvas.width - 2, canvas.height - 2);
             ctx.lineWidth = 1;
-            ctx.font = "40px public+sans";
+            ctx.font = "40px Arial";
             ctx.textAlign = "center";
             ctx.fillStyle = subgraph_node.bgcolor || "#AAA";
             var title = "";
@@ -8435,7 +8435,7 @@ LGraphNode.prototype.executeAction = function(action)
             ) {
                 if (this.zoom_modify_alpha) {
                     ctx.globalAlpha =
-                        0;
+                        (1.0 - 0.5 / this.ds.scale) * this.editor_alpha;
                 } else {
                     ctx.globalAlpha = this.editor_alpha;
                 }
@@ -8590,7 +8590,7 @@ LGraphNode.prototype.executeAction = function(action)
 
         if (node.flags.collapsed) {
             ctx.font = this.inner_text_font;
-            var title = "node.getTitle ? node.getTitle() : node.title";
+            var title = node.getTitle ? node.getTitle() : node.title;
             if (title != null) {
                 node._collapsed_width = Math.min(
                     node.size[0],
@@ -8670,8 +8670,7 @@ LGraphNode.prototype.executeAction = function(action)
                     if ( this.connecting_output && !LiteGraph.isValidConnection( slot.type , out_slot.type) ) {
                         ctx.globalAlpha = 0.4 * editor_alpha;
                     }
-                    
-                
+
                     ctx.fillStyle =
                         slot.link != null
                             ? slot.color_on ||
@@ -9038,21 +9037,8 @@ LGraphNode.prototype.executeAction = function(action)
         mouse_over
     ) {
         //bg rect
-        ctx.strokeStyle = "#212225";
-        ctx.fillStyle = "#212225";
-
-
-        if (node.inputs) {
-            for (var i = 0; i < node.inputs.length; i++) {
-                node.inputs[i].color_on = fgcolor;
-            }
-        }
-
-        if (node.outputs) {
-            for (var i = 0; i < node.outputs.length; i++) {
-                node.outputs[i].color_on = fgcolor;
-            }
-        }
+        ctx.strokeStyle = fgcolor;
+        ctx.fillStyle = bgcolor;
 
         var title_height = LiteGraph.NODE_TITLE_HEIGHT;
         var low_quality = this.ds.scale < 0.5;
@@ -9110,7 +9096,7 @@ LGraphNode.prototype.executeAction = function(action)
 			if(!node.flags.collapsed && render_title)
 			{
 				ctx.shadowColor = "transparent";
-				ctx.fillStyle = fgcolor;
+				ctx.fillStyle = "rgba(0,0,0,0.2)";
 				ctx.fillRect(0, -1, area[2], 2);
 			}
         }
@@ -9129,7 +9115,7 @@ LGraphNode.prototype.executeAction = function(action)
                 title_mode != LiteGraph.TRANSPARENT_TITLE &&
                 (node.constructor.title_color || this.render_title_colored)
             ) {
-                var title_color = node.constructor.title_color || "#212225";
+                var title_color = node.constructor.title_color || fgcolor;
 
                 if (node.flags.collapsed) {
                     ctx.shadowColor = LiteGraph.DEFAULT_SHADOW_COLOR;
@@ -9168,7 +9154,7 @@ LGraphNode.prototype.executeAction = function(action)
             var colState = false;
             if (LiteGraph.node_box_coloured_by_mode){
                 if(LiteGraph.NODE_MODES_COLORS[node.mode]){
-                    colState = fgcolor;
+                    colState = LiteGraph.NODE_MODES_COLORS[node.mode];
                 }
             }
             if (LiteGraph.node_box_coloured_when_on){
@@ -9197,7 +9183,7 @@ LGraphNode.prototype.executeAction = function(action)
                     ctx.fill();
                 }
                 
-                ctx.fillStyle = fgcolor;
+                ctx.fillStyle = node.boxcolor || colState || LiteGraph.NODE_DEFAULT_BOXCOLOR;
 				if(low_quality)
 					ctx.fillRect( title_height * 0.5 - box_size *0.5, title_height * -0.5 - box_size *0.5, box_size , box_size  );
 				else
@@ -9327,11 +9313,11 @@ LGraphNode.prototype.executeAction = function(action)
                 (shape == LiteGraph.CARD_SHAPE && node.flags.collapsed)
             ) {
                 ctx.roundRect(
-                    1 + area[0],
-                    1 + area[1],
-                    0 + area[2],
-                    -1 + area[3],
-                    [this.round_radius]
+                    -6 + area[0],
+                    -6 + area[1],
+                    12 + area[2],
+                    12 + area[3],
+                    [this.round_radius * 2]
                 );
             } else if (shape == LiteGraph.CARD_SHAPE) {
                 ctx.roundRect(
@@ -9339,7 +9325,7 @@ LGraphNode.prototype.executeAction = function(action)
                     -6 + area[1],
                     12 + area[2],
                     12 + area[3],
-                    [this.round_radius]
+                    [this.round_radius * 2,2,this.round_radius * 2,2]
                 );
             } else if (shape == LiteGraph.CIRCLE_SHAPE) {
                 ctx.arc(
@@ -9350,7 +9336,7 @@ LGraphNode.prototype.executeAction = function(action)
                     Math.PI * 2
                 );
             }
-            ctx.strokeStyle = fgcolor;
+            ctx.strokeStyle = LiteGraph.NODE_BOX_OUTLINE_COLOR;
             ctx.stroke();
             ctx.strokeStyle = fgcolor;
             ctx.globalAlpha = 1;
@@ -9382,8 +9368,8 @@ LGraphNode.prototype.executeAction = function(action)
         //draw connections
         ctx.lineWidth = this.connections_width;
 
-        ctx.fillStyle = "#a00";
-        ctx.strokeStyle = "#a00";
+        ctx.fillStyle = "#AAA";
+        ctx.strokeStyle = "#AAA";
         ctx.globalAlpha = this.editor_alpha;
         //for every node
         var nodes = this.graph._nodes;
@@ -9903,7 +9889,7 @@ LGraphNode.prototype.executeAction = function(action)
                 y = w.y;
             }
             w.last_y = y;
-            ctx.strokeStyle = "outline_color";
+            ctx.strokeStyle = outline_color;
             ctx.fillStyle = "#222";
             ctx.textAlign = "left";
 			//ctx.lineWidth = 2;
@@ -10342,7 +10328,7 @@ LGraphNode.prototype.executeAction = function(action)
 
             var font_size =
                 group.font_size || LiteGraph.DEFAULT_GROUP_FONT_SIZE;
-            ctx.font = font_size + "px public+sans";
+            ctx.font = font_size + "px Arial";
 			ctx.textAlign = "left";
             ctx.fillText(group.title, pos[0] + 4, pos[1] + font_size);
         }
@@ -12685,12 +12671,6 @@ LGraphNode.prototype.executeAction = function(action)
                                     if (LGraphCanvas.node_colors[value]){
                                         node.color = LGraphCanvas.node_colors[value].color;
                                         node.bgcolor = LGraphCanvas.node_colors[value].bgcolor;
-                                        node.strokeStyle = node.color;
-
-                                        LGraphCanvas.default_connection_color = "pink";
-                                    
-                                        // this.default_connection_color.input_on = "pink";
-                                        // this.default_connection_color.input_on = "pink";
                                     }else{
                                         console.warn("unexpected color: "+value);
                                     }
@@ -12701,7 +12681,6 @@ LGraphNode.prototype.executeAction = function(action)
                             }
                             graphcanvas.graph.afterChange();
                             graphcanvas.dirty_canvas = true;
-
                         };
             
             panel.addWidget( "string", "Title", node.title, {}, fUpdate);
@@ -13177,14 +13156,19 @@ LGraphNode.prototype.executeAction = function(action)
     };
 
     LGraphCanvas.node_colors = {
-        blue: { color: "#1734EB", bgcolor: "#1734EB", groupcolor: "#1734EB" },
-        pink: { color: "#D90368", bgcolor: "#D90368", groupcolor: "#D90368" },
-        cyan: { color: "#00C2D1", bgcolor: "#00C2D1", groupcolor: "#00C2D1" },
-        yellow: { color: "#F9E900", bgcolor: "#F9E900", groupcolor: "#F9E900" },
-        green: { color: "#37FF8B", bgcolor: "#37FF8B", groupcolor: "#37FF8B" },
-        violet: { color: "#BEB8EB", bgcolor: "#BEB8EB", groupcolor: "#BEB8EB" },
-        orange: { color: "#F29939", bgcolor: "#F29939", groupcolor: "#F29939" },
-
+        red: { color: "#322", bgcolor: "#533", groupcolor: "#A88" },
+        brown: { color: "#332922", bgcolor: "#593930", groupcolor: "#b06634" },
+        green: { color: "#232", bgcolor: "#353", groupcolor: "#8A8" },
+        blue: { color: "#223", bgcolor: "#335", groupcolor: "#88A" },
+        pale_blue: {
+            color: "#2a363b",
+            bgcolor: "#3f5159",
+            groupcolor: "#3f789e"
+        },
+        cyan: { color: "#233", bgcolor: "#355", groupcolor: "#8AA" },
+        purple: { color: "#323", bgcolor: "#535", groupcolor: "#a1309b" },
+        yellow: { color: "#432", bgcolor: "#653", groupcolor: "#b58b2a" },
+        black: { color: "#222", bgcolor: "#000", groupcolor: "#444" }
     };
 
     LGraphCanvas.prototype.getCanvasMenuOptions = function() {
